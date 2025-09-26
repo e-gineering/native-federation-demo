@@ -1,13 +1,9 @@
-import { createRouter } from './router.js';
-import { getCounter, setCounter, bus } from './state.js';
-import { log } from 'logger';
+import { router } from './router.js';
+import { state } from 'state';
+import { eventBus } from 'eventBus';
+import { navigation } from 'navigation';
+import { logger } from 'logger';
 import { SharedButton } from 'sharedButton';
-
-// Create state object for backward compatibility with remotes
-const state = {
-  getCounter,
-  setCounter,
-};
 
 // Available remotes and their federated functions
 const remotes = [
@@ -17,6 +13,41 @@ const remotes = [
 ];
 
 const app = document.getElementById('app');
+
+// --- Router Setup ---
+const appRouter = router.createRouter({
+  "/": () => render("/"),
+  "/remote1": () => render("/remote1"),
+  "/remote2": () => render("/remote2"),
+  "/remote3": () => render("/remote3"),
+  "*": () => render("/")
+});
+appRouter.init();
+
+// Initialize shared navigation service with router's navigate function
+navigation.initNavigation(appRouter.navigate);
+
+// --- Global Counter UI ---
+document.getElementById("global-counter").textContent = `Global Counter: ${state.getCounter()} (changed by host)`;
+
+// Subscribe to counter changes for DOM updates
+eventBus.subscribe("counterChanged", ({ counter, source }) => {
+  document.getElementById("global-counter").textContent = `Global Counter: ${counter} (changed by ${source})`;
+  logger.log(`Counter updated to ${counter} by ${source}`);
+});
+
+eventBus.subscribe("log", msg => {
+  console.log("[Logger]", msg);
+
+  // Update UI logs
+  const logs = document.getElementById("logs");
+  logs.innerHTML = (logs.innerHTML ? logs.innerHTML + "<br>" : "") + msg;
+  // Auto-scroll to bottom
+  logs.scrollTop = logs.scrollHeight;
+});
+
+// Initial log
+logger.log("Host app started. Try loading a remote!");
 
 // --- Header UI ---
 function renderHeader(routePath) {
@@ -28,7 +59,7 @@ function renderHeader(routePath) {
     if (routePath === `/${remote.key}`) link.classList.add('active');
     link.onclick = (e) => {
       e.preventDefault();
-      router.navigate(`/${remote.key}`);
+      appRouter.navigate(`/${remote.key}`);
     };
     nav.appendChild(link);
   });
@@ -40,7 +71,7 @@ function renderHeader(routePath) {
   if (routePath === "/") homeLink.classList.add('active');
   homeLink.onclick = (e) => {
     e.preventDefault();
-    router.navigate("/");
+    appRouter.navigate("/");
   };
   nav.insertBefore(homeLink, nav.firstChild);
 
@@ -68,15 +99,16 @@ function renderHeader(routePath) {
     const rKey = remoteSelect.value;
     const fn = fnSelect.value;
     try {
-      const remote = await import(rKey);
-      if (typeof remote[fn] === "function") {
-        remote[fn]({ state, bus });
-        log(`Host called ${fn} from ${rKey}`);
+      const remoteModule = await import(rKey);
+      const remoteObj = remoteModule[rKey];
+      if (typeof remoteObj[fn] === "function") {
+        logger.log(`Host called ${fn} from ${rKey}`);
+        remoteObj[fn]();
       } else {
-        log(`Remote ${rKey} does not export ${fn}`);
+        logger.log(`Remote ${rKey} does not export ${fn}`);
       }
     } catch (err) {
-      log(`Error loading ${rKey}: ${err.message}`);
+      logger.log(`Error loading ${rKey}: ${err.message}`);
     }
   };
 
@@ -111,20 +143,16 @@ function renderContent(routePath) {
   // Dynamically import remote and render its UI
   import(remoteKey)
     .then(mod => {
-      // Each remote exports render({ state, bus, navigate })
       content.innerHTML = "";
       content.style.background = remoteObj.color;
       content.style.borderRadius = "18px";
       content.style.boxShadow = "0 2px 8px rgba(0,0,0,0.06)";
-      mod.render({
-        state,
-        bus,
-        navigate: (path) => router.navigate(path)
-      }, content);
+      const remote = mod[remoteKey];
+      remote.render(content);
     })
     .catch(err => {
       content.innerHTML = `<h2>Error loading remote: ${remoteObj.name}</h2><pre>${err.message}</pre>`;
-      log(`Failed to load remote ${remoteKey}: ${err.message}`);
+      logger.log(`Failed to load remote ${remoteKey}: ${err.message}`);
     });
   return content;
 }
@@ -135,29 +163,3 @@ function render(routePath) {
   app.appendChild(renderHeader(routePath));
   app.appendChild(renderContent(routePath));
 }
-
-// --- Router Setup ---
-const router = createRouter({
-  "/": () => render("/"),
-  "/remote1": () => render("/remote1"),
-  "/remote2": () => render("/remote2"),
-  "/remote3": () => render("/remote3"),
-  "*": () => render("/")
-});
-router.init();
-
-// --- Global Counter UI ---
-document.getElementById("global-counter").textContent = `Global Counter: ${getCounter()} (changed by host)`;
-
-// --- Logger UI ---
-function updateLogs(msg) {
-  const logs = document.getElementById("logs");
-  logs.innerHTML = msg;
-}
-bus.subscribe("log", msg => {
-  const logs = document.getElementById("logs");
-  logs.innerHTML = (logs.innerHTML ? logs.innerHTML + "<br>" : "") + msg;
-});
-
-// Initial log
-log("Host app started. Try loading a remote!");

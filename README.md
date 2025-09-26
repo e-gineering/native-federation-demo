@@ -2,12 +2,13 @@
 
 ## Overview
 
-This playground demonstrates **browser-native module federation** with vanilla HTML/JS/CSS—no frameworks, no bundlers.  
+This playground demonstrates **browser-native module federation** with vanilla HTML/JS/CSS...no frameworks, no bundlers.
 Features:
 - Multiple microfrontends (“remotes”) loaded at runtime via ES modules and import maps
-- Host handles routing (browser history API), global state (counter), event bus, and UI composition
+- Host handles routing (browser history API) and UI composition
 - Remotes can trigger navigation, update global state, trigger cross-remote events
-- Shared federated utility (logger) and styled button used by host/remotes
+- Shared services (state, eventBus, navigation, logger) accessible to all modules via singleton patterns
+- Shared federated utilities (logger, navigation) and styled button used by host/remotes
 - Host composes UI with header (routes/nav), content area, footer (counter/viewer/logs)
 - Each remote served from a different origin (port) with CORS
 - Host HTML demonstrates **multiple `<script type="importmap">`** for browser-native merging
@@ -20,10 +21,11 @@ native-federation-demo/
 │   ├── index.html
 │   ├── main.js
 │   ├── router.js
-│   ├── state.js
-│   ├── eventBus.js
 │   ├── styles.css
 ├── shared-utils/
+│   ├── eventBus.js
+│   ├── state.js
+│   ├── navigation.js
 │   ├── logger.js
 │   ├── sharedButton.js
 ├── remote1/
@@ -45,15 +47,16 @@ native-federation-demo/
    npm install
    ```
 
-2. **Start servers (host + remotes) with one command:**
+2. **Start servers (host + remotes + shared-utils) with one command:**
    ```bash
    npm run start
    ```
-   This launches four static servers:
+   This launches five static servers:
    - Host:        http://localhost:8000/
    - Remote 1:    http://localhost:8001/
    - Remote 2:    http://localhost:8002/
    - Remote 3:    http://localhost:8003/
+   - Shared Utils: http://localhost:8004/
 
    (All servers use CORS.)
 
@@ -64,13 +67,14 @@ native-federation-demo/
 
 ## Features
 
-- **Routing:** Browser history API, handled by host, nav links in header, remotes can trigger navigation
-- **Global State:** Counter, managed by host, remotes update via eventBus API, all areas display current value
-- **Event Bus:** Simple pub/sub for cross-remote and host/remote communication
-- **Multiple Remotes:** Each remote is visually distinct, exports federated function (addByX), uses shared logger and button
+- **Routing:** Browser history API with factory function pattern, nav links in header, remotes can trigger navigation via shared navigation service
+- **Global State:** Counter managed by shared singleton state service, remotes update directly, all areas display current value
+- **Event Bus:** Shared singleton service for cross-remote and host/remote communication using functional patterns
+- **Navigation Service:** Shared navigation abstraction allowing remotes to navigate without direct router coupling
+- **Multiple Remotes:** Each remote is visually distinct, exports federated functions using object export patterns (addByX), uses shared services directly
 - **Import Maps:** Host HTML uses multiple `<script type="importmap">` tags—demonstrates browser-native module merging
-- **Federated Shared Button:** Styled button imported via import map, used by host and remotes
-- **Logger Utility:** Used everywhere, logs messages in footer and to console
+- **Federated Shared Services:** All services (eventBus, state, navigation, logger, sharedButton) imported via import map, used by host and remotes
+- **Functional Architecture:** Modern JS patterns with factory functions, closures, and singleton services replacing class-based patterns
 
 ## Requirements
 

@@ -1,5 +1,9 @@
 // Tiny router using browser history API
-export function createRouter(routes) {
+export const router = {
+  createRouter,
+};
+
+function createRouter(routes) {
   let currentRoute = null;
 
   const handleRoute = (path) => {

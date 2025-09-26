@@ -1,5 +1,5 @@
-// Simple event bus for pub/sub
-export function createEventBus() {
+// Simple event bus for pub/sub - Shared utility with singleton pattern
+function createEventBus() {
   const listeners = {};
 
   const subscribe = (event, handler) => {
@@ -25,3 +25,6 @@ export function createEventBus() {
     emit,
   };
 }
+
+// Create and export a singleton instance that gets created on first import
+export const eventBus = createEventBus();

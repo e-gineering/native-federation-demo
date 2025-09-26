@@ -1,8 +1,11 @@
 // Shared logger utility
-export function log(msg) {
-  console.log("[Logger]", msg);
-  // Emit to host event bus if present (for log area in host UI)
-  if (window && window.hostBus) {
-    window.hostBus.emit("log", msg);
-  }
+import { eventBus } from './eventBus.js';
+
+export const logger = {
+  log,
+};
+
+function log(msg) {
+  // Emit to shared event bus - host will handle console logging and UI updates
+  eventBus.emit("log", msg);
 }
