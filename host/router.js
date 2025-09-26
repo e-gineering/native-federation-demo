@@ -1,26 +1,34 @@
 // Tiny router using browser history API
-export class Router {
-  constructor(routes) {
-    this.routes = routes;
-    this.currentRoute = null;
-    window.addEventListener('popstate', () => this.handleRoute(location.pathname));
-  }
+export function createRouter(routes) {
+  let currentRoute = null;
 
-  init() {
-    this.handleRoute(location.pathname);
-  }
-
-  navigate(path) {
-    history.pushState({}, '', path);
-    this.handleRoute(path);
-  }
-
-  handleRoute(path) {
-    this.currentRoute = path;
-    if (this.routes[path]) {
-      this.routes[path]();
-    } else if (this.routes['*']) {
-      this.routes['*']();
+  const handleRoute = (path) => {
+    currentRoute = path;
+    if (routes[path]) {
+      routes[path]();
+    } else if (routes['*']) {
+      routes['*']();
     }
-  }
+  };
+
+  const navigate = (path) => {
+    history.pushState({}, '', path);
+    handleRoute(path);
+  };
+
+  const init = () => {
+    handleRoute(location.pathname);
+  };
+
+  const getCurrentRoute = () => currentRoute;
+
+  // Set up popstate listener
+  window.addEventListener('popstate', () => handleRoute(location.pathname));
+
+  return {
+    init,
+    navigate,
+    getCurrentRoute,
+    handleRoute,
+  };
 }

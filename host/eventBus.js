@@ -1,23 +1,27 @@
 // Simple event bus for pub/sub
-export class EventBus {
-  constructor() {
-    this.listeners = {};
-  }
+export function createEventBus() {
+  const listeners = {};
 
-  subscribe(event, handler) {
-    if (!this.listeners[event]) this.listeners[event] = [];
-    this.listeners[event].push(handler);
-    return () => this.unsubscribe(event, handler);
-  }
+  const subscribe = (event, handler) => {
+    if (!listeners[event]) listeners[event] = [];
+    listeners[event].push(handler);
+    return () => unsubscribe(event, handler);
+  };
 
-  unsubscribe(event, handler) {
-    if (!this.listeners[event]) return;
-    this.listeners[event] = this.listeners[event].filter(h => h !== handler);
-  }
+  const unsubscribe = (event, handler) => {
+    if (!listeners[event]) return;
+    listeners[event] = listeners[event].filter(h => h !== handler);
+  };
 
-  emit(event, data) {
-    if (this.listeners[event]) {
-      this.listeners[event].forEach(handler => handler(data));
+  const emit = (event, data) => {
+    if (listeners[event]) {
+      listeners[event].forEach(handler => handler(data));
     }
-  }
+  };
+
+  return {
+    subscribe,
+    unsubscribe,
+    emit,
+  };
 }

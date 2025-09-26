@@ -1,7 +1,13 @@
-import { Router } from './router.js';
-import { state, bus } from './state.js';
+import { createRouter } from './router.js';
+import { getCounter, setCounter, bus } from './state.js';
 import { log } from 'logger';
 import { SharedButton } from 'sharedButton';
+
+// Create state object for backward compatibility with remotes
+const state = {
+  getCounter,
+  setCounter,
+};
 
 // Available remotes and their federated functions
 const remotes = [
@@ -131,7 +137,7 @@ function render(routePath) {
 }
 
 // --- Router Setup ---
-const router = new Router({
+const router = createRouter({
   "/": () => render("/"),
   "/remote1": () => render("/remote1"),
   "/remote2": () => render("/remote2"),
@@ -141,7 +147,7 @@ const router = new Router({
 router.init();
 
 // --- Global Counter UI ---
-document.getElementById("global-counter").textContent = `Global Counter: ${state.getCounter()} (changed by host)`;
+document.getElementById("global-counter").textContent = `Global Counter: ${getCounter()} (changed by host)`;
 
 // --- Logger UI ---
 function updateLogs(msg) {

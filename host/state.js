@@ -1,19 +1,26 @@
-// Global state management (counter) with event bus integration
-import { EventBus } from './eventBus.js';
+import { createEventBus } from './eventBus.js';
 import { log } from 'logger';
 
-export const bus = new EventBus();
+export const bus = createEventBus();
 
-let counter = 0;
+function createCounterState(initialValue = 0) {
+  let counter = initialValue;
 
-export const state = {
-  getCounter: () => counter,
-  setCounter: (val, source = 'host') => {
+  const getCounter = () => counter;
+
+  const setCounter = (val, source = 'host') => {
     counter = val;
     bus.emit("counterChanged", { counter, source });
     log(`Counter updated to ${counter} by ${source}`);
-  }
-};
+  };
+
+  return {
+    getCounter,
+    setCounter,
+  };
+}
+
+export const { getCounter, setCounter } = createCounterState(0);
 
 // Subscribe to counterChanged events for demo
 bus.subscribe("counterChanged", ({ counter, source }) => {
