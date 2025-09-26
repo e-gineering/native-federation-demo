@@ -1,0 +1,17 @@
+{
+  "name": "native-federation-demo",
+  "version": "1.0.0",
+  "description": "Browser-native federation playground with vanilla JS",
+  "scripts": {
+    "start": "concurrently \"npm run start:host\" \"npm run start:shared\" \"npm run start:remote1\" \"npm run start:remote2\" \"npm run start:remote3\"",
+    "start:host": "http-server host -p 8000 --cors",
+    "start:shared": "http-server shared-utils -p 8004 --cors",
+    "start:remote1": "http-server remote1 -p 8001 --cors",
+    "start:remote2": "http-server remote2 -p 8002 --cors",
+    "start:remote3": "http-server remote3 -p 8003 --cors"
+  },
+  "devDependencies": {
+    "concurrently": "^9.2.1",
+    "http-server": "^14.1.1"
+  }
+}

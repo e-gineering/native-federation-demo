@@ -1,0 +1,86 @@
+:root {
+  --primary-gradient: linear-gradient(90deg, #4f8cff, #67e2ae);
+  --header-radius: 0 0 20px 20px;
+  --footer-radius: 20px 20px 0 0;
+  --content-radius: 18px;
+  --button-radius: 12px;
+  --font-family: system-ui, sans-serif;
+  --host-bg: #f9fafe;
+  --remote1-gradient: linear-gradient(135deg, #FFD700, #FF8C00);
+  --remote2-gradient: linear-gradient(135deg, #50fa7b, #4f8cff);
+  --remote3-gradient: linear-gradient(135deg, #e67ee6, #ff72a6);
+  --text-color: #333;
+}
+
+body {
+  font-family: var(--font-family);
+  background: var(--host-bg);
+  margin: 0;
+  padding: 0;
+}
+
+header {
+  background: var(--primary-gradient);
+  color: white;
+  padding: 1rem;
+  display: flex;
+  align-items: center;
+  border-radius: var(--header-radius);
+  margin-bottom: 1rem;
+  justify-content: space-between;
+
+  nav {
+    a {
+      margin: 0 1rem;
+      color: white;
+      text-decoration: none;
+      font-weight: bold;
+      transition: text-shadow 0.2s;
+
+      &.active {
+        text-shadow: 0 0 8px #fff;
+      }
+    }
+  }
+}
+
+.content {
+  padding: 2rem;
+  min-height: 300px;
+  border-radius: var(--content-radius);
+  box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+  background: white;
+}
+
+footer {
+  background: var(--primary-gradient);
+  color: white;
+  padding: 1rem;
+  border-radius: var(--footer-radius);
+  position: fixed;
+  width: 100vw;
+  bottom: 0;
+  left: 0;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+
+  #logs {
+    font-size: 0.9rem;
+    margin-top: 0.5rem;
+    max-height: 60px;
+    overflow-y: auto;
+  }
+
+  #global-counter {
+    font-weight: bold;
+    font-size: 1.2rem;
+  }
+}
+
+select, button {
+  margin: 0 0.5rem;
+  font-size: 1rem;
+  border-radius: var(--button-radius);
+}

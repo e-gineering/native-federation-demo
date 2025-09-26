@@ -1,0 +1,20 @@
+:root {
+  --remote2-gradient: linear-gradient(135deg, #50fa7b, #4f8cff);
+  --content-radius: 18px;
+  --text-color: #333;
+}
+
+.content {
+  background: var(--remote2-gradient);
+  color: var(--text-color);
+  border-radius: var(--content-radius);
+  box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+
+  h2 {
+    margin-top: 0;
+  }
+
+  button {
+    border-radius: 12px;
+  }
+}
