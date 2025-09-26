@@ -4,7 +4,7 @@
   "description": "Browser-native federation playground with vanilla JS",
   "scripts": {
     "start": "concurrently \"npm run start:host\" \"npm run start:shared\" \"npm run start:remote1\" \"npm run start:remote2\" \"npm run start:remote3\"",
-    "start:host": "http-server host -p 8000 --cors",
+    "start:host": "http-server host -p 8000 --cors --proxy http://localhost:8000?",
     "start:shared": "http-server shared-utils -p 8004 --cors",
     "start:remote1": "http-server remote1 -p 8001 --cors",
     "start:remote2": "http-server remote2 -p 8002 --cors",
