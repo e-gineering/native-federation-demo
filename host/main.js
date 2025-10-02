@@ -87,7 +87,7 @@ function renderHeader(routePath) {
 
   const fnSelect = document.createElement('select');
   fnSelect.id = "fn-select";
-  [{fn:"addBy1", label:"+1"}, {fn:"addBy5", label:"+5"}, {fn:"addBy10", label:"+10"}].forEach(item => {
+  [{ fn: "addBy1", label: "+1" }, { fn: "addBy5", label: "+5" }, { fn: "addBy10", label: "+10" }].forEach(item => {
     const opt = document.createElement('option');
     opt.value = item.fn;
     opt.textContent = item.label;
@@ -113,10 +113,7 @@ function renderHeader(routePath) {
   };
 
   const header = document.createElement('header');
-  header.appendChild(nav);
-  header.appendChild(remoteSelect);
-  header.appendChild(fnSelect);
-  header.appendChild(callBtn);
+  header.append(nav, remoteSelect, fnSelect, callBtn);
 
   return header;
 }
@@ -160,6 +157,5 @@ function renderContent(routePath) {
 // --- App Renderer ---
 function render(routePath) {
   app.innerHTML = "";
-  app.appendChild(renderHeader(routePath));
-  app.appendChild(renderContent(routePath));
+  app.append(renderHeader(routePath), renderContent(routePath));
 }
