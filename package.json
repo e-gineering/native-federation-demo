@@ -10,7 +10,9 @@
     "start:remote3": "http-server remote3 -p 8003 --cors",
     "start:shared-utils": "http-server shared-utils -p 8004 --cors",
     "start:public-node_modules": "http-server public-node_modules -p 8005 --cors",
-    "setup:public-node_modules": "copy node_modules\\es-module-shims\\dist\\es-module-shims.debug.js public-node_modules\\es-module-shims.debug.js",
+    "setup:public-node_modules": "npm run copy:es-module-shims && npm run copy:import-map-overrides",
+    "copy:es-module-shims": "copy node_modules\\es-module-shims\\dist\\es-module-shims.debug.js public-node_modules\\es-module-shims.debug.js",
+    "copy:import-map-overrides": "copy node_modules\\import-map-overrides\\dist\\import-map-overrides.js public-node_modules\\import-map-overrides.js",
     "postinstall": "npm run setup:public-node_modules"
   },
   "devDependencies": {
@@ -18,6 +20,7 @@
     "http-server": "^14.1.1"
   },
   "dependencies": {
-    "es-module-shims": "^2.6.2"
+    "es-module-shims": "^2.6.2",
+    "import-map-overrides": "^6.1.0"
   }
 }

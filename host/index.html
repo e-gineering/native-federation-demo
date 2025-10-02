@@ -31,14 +31,18 @@
   <script type="importmap">
     {
       "imports": {
-        "remote1": "http://localhost:8001/remote1.js",
         "remote2": "http://localhost:8002/remote2.js",
         "remote3": "http://localhost:8003/remote3.js"
       }
     }
   </script>
+  <!-- Dev tool UI that supports dynamic import map overrides -->
+  <script async src="http://localhost:8005/import-map-overrides.js"></script>
 </head>
 <body>
+  <!-- Include a 3rd party UI for facilitating import map overrides on the fly -->
+  <import-map-overrides-full></import-map-overrides-full>
+
   <div id="app"></div>
   <footer>
     <div id="global-counter"></div>
