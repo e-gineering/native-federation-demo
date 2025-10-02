@@ -5,6 +5,15 @@
   <title>Native Federation Playground</title>
   <link rel="stylesheet" href="styles.css">
 
+  <!-- ES Module Shims with forced polyfill engagement for multiple import maps -->
+  <script async src="http://localhost:8005/es-module-shims.debug.js"></script>
+
+  <!-- Force ES Module Shims engagement by including an import that will fail in browsers without multiple import map support -->
+  <script type="module">
+    // This will cause a static import error in Firefox, triggering ES Module Shims polyfill
+    import 'trigger-polyfill-engagement';
+  </script>
+
   <!-- Core shared imports -->
   <script type="importmap">
     {
@@ -13,7 +22,8 @@
         "sharedButton": "http://localhost:8004/sharedButton.js",
         "eventBus": "http://localhost:8004/eventBus.js",
         "state": "http://localhost:8004/state.js",
-        "navigation": "http://localhost:8004/navigation.js"
+        "navigation": "http://localhost:8004/navigation.js",
+        "trigger-polyfill-engagement": "data:text/javascript,// Dummy module to trigger ES Module Shims"
       }
     }
   </script>

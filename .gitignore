@@ -4,6 +4,9 @@ npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 
+# Public npm modules service (generated from node_modules)
+public-node_modules/
+
 # Build outputs
 dist/
 build/
